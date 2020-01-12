@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingAppAPI.Data;
 using DatingAppAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,11 +32,14 @@ namespace DatingAppAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddEntityFrameworkSqlServer()
-                .AddDbContext<EFContext>(option => option.UseSqlServer(Configuration["ConnectionString:DefaultConnection"]));
+                .AddDbContext<DataContext>(option => option.UseSqlServer(Configuration["ConnectionString:DefaultConnection"]));
             services.AddCors();
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters

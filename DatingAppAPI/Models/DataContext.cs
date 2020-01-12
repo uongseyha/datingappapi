@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatingAppAPI.Models
 {
-    public class EFContext: DbContext
+    public class DataContext: DbContext
     {
         //private const string connectionString = "data source=.\\SQLEXPRESS; initial catalog=DatingAppDB;integrated security=SSPI;";
 
@@ -15,12 +15,13 @@ namespace DatingAppAPI.Models
         //    optionsBuilder.UseSqlServer(connectionString);
         //}
 
-        public EFContext(DbContextOptions<EFContext> option) : base(option)
+        public DataContext(DbContextOptions<DataContext> option) : base(option)
         {
 
         }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Photo> Photos { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace DatingAppAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]UserRegisterRequest userRegister)
+        public async Task<IActionResult> Register([FromBody]UserForRegisterDto userRegister)
         {
             userRegister.userName = userRegister.userName.ToLower();
 
@@ -47,7 +47,7 @@ namespace DatingAppAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginRequest userLogin)
+        public async Task<IActionResult> Login(UserForLoginDto userLogin)
         {
             var login = await _authRepository.Login(userLogin.userName, userLogin.password);
 

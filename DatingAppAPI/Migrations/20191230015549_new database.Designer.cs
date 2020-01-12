@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingAppAPI.Migrations
 {
-    [DbContext(typeof(EFContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20191230015549_new database")]
     partial class newdatabase
     {

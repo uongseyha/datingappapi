@@ -4,14 +4,16 @@ using DatingAppAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingAppAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20200110191157_User_PhotoExtension")]
+    partial class User_PhotoExtension
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +40,7 @@ namespace DatingAppAPI.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -94,7 +96,7 @@ namespace DatingAppAPI.Migrations
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("KnownAs")
+                    b.Property<string>("KnowAs")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastActive")
@@ -119,11 +121,9 @@ namespace DatingAppAPI.Migrations
 
             modelBuilder.Entity("DatingAppAPI.Models.Photo", b =>
                 {
-                    b.HasOne("DatingAppAPI.Models.User", "User")
+                    b.HasOne("DatingAppAPI.Models.User", null)
                         .WithMany("Photos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

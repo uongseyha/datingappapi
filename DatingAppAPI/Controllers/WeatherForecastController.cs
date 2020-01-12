@@ -12,7 +12,7 @@ namespace DatingAppAPI.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly EFContext _dbContext;
+        private readonly DataContext _dbContext;
 
         private static readonly string[] Summaries = new[]
         {
@@ -21,7 +21,7 @@ namespace DatingAppAPI.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, EFContext eFContext)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, DataContext eFContext)
         {
             _logger = logger;
             _dbContext = eFContext;

@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DatingAppAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly EFContext _dbContext;
-        public ProductController(EFContext eFContext)
+        private readonly DataContext _dbContext;
+        public ProductController(DataContext eFContext)
         {
             _dbContext = eFContext;
         }

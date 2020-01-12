@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingAppAPI.Migrations
 {
-    [DbContext(typeof(EFContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20200103020442_add user model")]
     partial class addusermodel
     {

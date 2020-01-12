@@ -4,14 +4,16 @@ using DatingAppAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingAppAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20200110192926_PhotosExtension")]
+    partial class PhotosExtension
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,7 +96,7 @@ namespace DatingAppAPI.Migrations
                     b.Property<string>("Introduction")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("KnownAs")
+                    b.Property<string>("KnowAs")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastActive")
