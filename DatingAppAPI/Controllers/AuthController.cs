@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingAppAPI.Data;
 using DatingAppAPI.DTO;
 using DatingAppAPI.Models;
@@ -21,11 +22,13 @@ namespace DatingAppAPI.Controllers
     {
         private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository authRepository,IConfiguration config)
+        public AuthController(IAuthRepository authRepository,IConfiguration config, IMapper mapper)
         {
             this._authRepository = authRepository;
             this._config = config;
+            this._mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -49,14 +52,14 @@ namespace DatingAppAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userLogin)
         {
-            var login = await _authRepository.Login(userLogin.userName, userLogin.password);
+            var userFromRepo = await _authRepository.Login(userLogin.userName, userLogin.password);
 
-            if (login == null) return Unauthorized();
+            if (userFromRepo == null) return Unauthorized();
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,login.Id.ToString()),
-                new Claim(ClaimTypes.Name, login.UserName)
+                new Claim(ClaimTypes.NameIdentifier,userFromRepo.Id.ToString()),
+                new Claim(ClaimTypes.Name, userFromRepo.UserName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
@@ -72,8 +75,11 @@ namespace DatingAppAPI.Controllers
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return Ok(new { token=tokenHandler.WriteToken(token)});
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+            return Ok(new { 
+                token=tokenHandler.WriteToken(token),
+                user
+            });
         }
     }
 }

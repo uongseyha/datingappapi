@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DatingAppAPI.Data;
+using DatingAppAPI.Helper;
 using DatingAppAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +41,7 @@ namespace DatingAppAPI
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<DataContext>(option => option.UseSqlServer(Configuration["ConnectionString:DefaultConnection"]));
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IDatingRepository, DatingRepository>();
@@ -58,6 +63,22 @@ namespace DatingAppAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            {
+                app.UseExceptionHandler(builer =>
+                {
+                    builer.Run(async context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                        var err = context.Features.Get<IExceptionHandlerFeature>();
+                        if (err != null)
+                        {
+                            context.Response.AddApplicationError(err.Error.Message);
+                            await context.Response.WriteAsync(err.Error.ToString());
+                        }
+                    });
+                });
             }
 
             //app.UseHttpsRedirection();

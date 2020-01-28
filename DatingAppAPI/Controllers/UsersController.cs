@@ -15,12 +15,12 @@ namespace DatingAppAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IDatingRepository _repos;
         private readonly IMapper _mapper;
 
-        public UserController(IDatingRepository datingRepository, IMapper mapper)
+        public UsersController(IDatingRepository datingRepository, IMapper mapper)
         {
             this._repos = datingRepository;
             this._mapper = mapper;
@@ -38,7 +38,7 @@ namespace DatingAppAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _repos.GetUser(id);
+            var user = await _repos.GetUser(id,true);
             var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
             return Ok(userToReturn);
@@ -52,7 +52,7 @@ namespace DatingAppAPI.Controllers
                 return Unauthorized();
             }
 
-            var userFromDto = await _repos.GetUser(id);
+            var userFromDto = await _repos.GetUser(id,true);
             _mapper.Map(userForUpdateDto, userFromDto);
 
             if (await _repos.SaveAll()) return NoContent();
