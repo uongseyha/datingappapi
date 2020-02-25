@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using DatingApp.API.Helpers;
 using DatingAppAPI.Data;
 using DatingAppAPI.DTO;
 using DatingAppAPI.Helper;
@@ -29,10 +30,19 @@ namespace DatingAppAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _repos.GetUsers();
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userFromRepo = await _repos.GetUser(currentUserId, true);
+            userParams.UserId = currentUserId;
+
+            if (String.IsNullOrEmpty(userParams.Gender))
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+
+            var users = await _repos.GetUsers(userParams);
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(usersToReturn);
         }
