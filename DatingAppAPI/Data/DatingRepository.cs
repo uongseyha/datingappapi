@@ -48,6 +48,18 @@ namespace DatingAppAPI.Data
             users = users.Where(x => x.Id != userParams.UserId);
             users = users.Where(x => x.Gender == userParams.Gender);
 
+            if (userParams.Likers)
+            {
+                var userLikers = await GetUserLikes(userParams.UserId, userParams.Likers);
+                users = users.Where(x => userLikers.Contains(x.Id));
+            }
+
+            if (userParams.Likees)
+            {
+                var userLikees = await GetUserLikes(userParams.UserId, userParams.Likers);
+                users = users.Where(x => userLikees.Contains(x.Id));
+            }
+
             if (userParams.MinAge !=18 || userParams.MaxAge != 99)
             {
                 var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
@@ -72,6 +84,23 @@ namespace DatingAppAPI.Data
             return await PagedList<User>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
         }
 
+        public async Task<IEnumerable<int>> GetUserLikes(int id, bool liker) 
+        {
+            var user = await _dataContext.Users
+                .Include(x => x.Likees)
+                .Include(x => x.Likers)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (liker)
+            {
+                return user.Likers.Where(x => x.LikeeId == id).Select(i => i.LikerId);
+            }
+            else
+            {
+                return user.Likees.Where(x => x.LikerId == id).Select(i => i.LikeeId);
+            }
+        }
+
         public async Task<bool> SaveAll()
         {
             return await _dataContext.SaveChangesAsync() > 0;
@@ -88,6 +117,11 @@ namespace DatingAppAPI.Data
         public async Task<Photo> GetMainPhotoForUser(int userId)
         {
             return await _dataContext.Photos.Where(x => x.UserId == userId).FirstOrDefaultAsync(x => x.IsMain);
+        }
+
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _dataContext.Likes.FirstOrDefaultAsync(x => x.LikerId == userId && x.LikeeId == recipientId);
         }
     }
 }
